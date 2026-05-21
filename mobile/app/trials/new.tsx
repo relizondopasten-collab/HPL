@@ -12,7 +12,7 @@ import {
 import { router } from 'expo-router';
 
 import { Select, type SelectOption } from '@/components/Select';
-import { api } from '@/lib/api';
+import { randomizeRCBD } from '@/lib/rcbd';
 import {
   createTrialFull,
   listClients,
@@ -163,7 +163,7 @@ export default function NewTrialScreen() {
 
     setBusy(true);
     try {
-      const { plots: layout } = await api.rcbd(nT, nB, seedNum);
+      const layout = randomizeRCBD(nT, nB, seedNum);
       const trial = await createTrialFull({
         code: code.trim(),
         name: name.trim(),
