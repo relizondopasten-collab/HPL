@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import { router } from 'expo-router';
 
+import { DateField } from '@/components/DateField';
 import { Select, type SelectOption } from '@/components/Select';
 import { randomizeRCBD } from '@/lib/rcbd';
 import {
@@ -58,7 +59,7 @@ export default function NewTrialScreen() {
   const [cropId, setCropId] = useState<string | null>(null);
   const [pestId, setPestId] = useState<string | null>(null);
   const [location, setLocation] = useState('');
-  const [startDate, setStartDate] = useState('');
+  const [startDate, setStartDate] = useState<Date | null>(null);
 
   // ---- Diseño ----
   const [nTreatments, setNTreatments] = useState('4');
@@ -174,7 +175,7 @@ export default function NewTrialScreen() {
         n_treatments: nT,
         n_replicates: nB,
         location: location.trim() || null,
-        start_date: startDate.trim() || null,
+        start_date: startDate ? startDate.toISOString().slice(0, 10) : null,
         treatments,
         layout,
       });
@@ -260,14 +261,13 @@ export default function NewTrialScreen() {
             onChangeText={setLocation}
           />
         </Field>
-        <Field label="Fecha de inicio (YYYY-MM-DD)">
-          <TextInput
-            style={styles.input}
-            placeholder="2026-05-20"
-            value={startDate}
-            onChangeText={setStartDate}
-          />
-        </Field>
+        <DateField
+          label="Fecha de inicio"
+          value={startDate}
+          onChange={setStartDate}
+          mode="date"
+          placeholder="Tocar para elegir"
+        />
       </Section>
 
       <Section title="Diseño experimental (DBCA)">

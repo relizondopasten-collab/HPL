@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 
+import { DateField } from '@/components/DateField';
 import { PhotoCapture, type CapturedPhoto } from '@/components/PhotoCapture';
 import { PlotCounter, type Counts } from '@/components/PlotCounter';
 import { Select, type SelectOption } from '@/components/Select';
@@ -37,7 +38,7 @@ export default function NewEvaluationScreen() {
   const [pestId, setPestId] = useState<string | null>(null);
   const [pestDetail, setPestDetail] = useState<PestDetail | null>(null);
 
-  const [evaluatedAt, setEvaluatedAt] = useState(() => new Date().toISOString().slice(0, 16));
+  const [evaluatedAt, setEvaluatedAt] = useState<Date>(() => new Date());
   const [dda, setDda] = useState('');
   const [protocolRef, setProtocolRef] = useState('');
   const [notes, setNotes] = useState('');
@@ -194,7 +195,7 @@ export default function NewEvaluationScreen() {
         payload: {
           evaluation: {
             trial_id: id,
-            evaluated_at: new Date(evaluatedAt).toISOString(),
+            evaluated_at: evaluatedAt.toISOString(),
             pest_id: pestId,
             days_after_application: ddaNum,
             protocol_ref: protocolRef.trim() || null,
@@ -242,14 +243,12 @@ export default function NewEvaluationScreen() {
     >
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Datos de la evaluación</Text>
-        <Field label="Fecha y hora">
-          <TextInput
-            style={styles.input}
-            value={evaluatedAt}
-            onChangeText={setEvaluatedAt}
-            placeholder="YYYY-MM-DDTHH:MM"
-          />
-        </Field>
+        <DateField
+          label="Fecha y hora"
+          value={evaluatedAt}
+          onChange={setEvaluatedAt}
+          mode="datetime"
+        />
         <Select
           label="Plaga / enfermedad evaluada"
           value={pestId}

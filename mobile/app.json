@@ -6,8 +6,13 @@
     "orientation": "portrait",
     "scheme": "estacionexp",
     "userInterfaceStyle": "automatic",
-    "ios": { "supportsTablet": true, "bundleIdentifier": "com.estacionexperimental.app" },
-    "android": { "package": "com.estacionexperimental.app" },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.estacionexperimental.app"
+    },
+    "android": {
+      "package": "com.estacionexperimental.app"
+    },
     "plugins": [
       "expo-router",
       [
@@ -16,8 +21,11 @@
           "photosPermission": "Esta app usa la galería para adjuntar evidencia fotográfica a las evaluaciones.",
           "cameraPermission": "Esta app usa la cámara para fotografiar parcelas y síntomas durante la evaluación."
         }
-      ]
+      ],
+      "@react-native-community/datetimepicker"
     ],
-    "experiments": { "typedRoutes": true }
+    "experiments": {
+      "typedRoutes": true
+    }
   }
 }
