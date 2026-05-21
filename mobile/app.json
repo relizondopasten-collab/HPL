@@ -1,0 +1,23 @@
+{
+  "expo": {
+    "name": "Estación Experimental",
+    "slug": "estacion-experimental",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "scheme": "estacionexp",
+    "userInterfaceStyle": "automatic",
+    "ios": { "supportsTablet": true, "bundleIdentifier": "com.estacionexperimental.app" },
+    "android": { "package": "com.estacionexperimental.app" },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Esta app usa la galería para adjuntar evidencia fotográfica a las evaluaciones.",
+          "cameraPermission": "Esta app usa la cámara para fotografiar parcelas y síntomas durante la evaluación."
+        }
+      ]
+    ],
+    "experiments": { "typedRoutes": true }
+  }
+}
