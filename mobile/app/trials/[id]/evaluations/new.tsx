@@ -233,7 +233,13 @@ export default function NewEvaluationScreen() {
   }
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
+    <ScrollView
+      style={styles.container}
+      contentContainerStyle={styles.content}
+      keyboardShouldPersistTaps="handled"
+      automaticallyAdjustKeyboardInsets
+      keyboardDismissMode="interactive"
+    >
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Datos de la evaluación</Text>
         <Field label="Fecha y hora">

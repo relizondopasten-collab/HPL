@@ -142,7 +142,13 @@ export default function AnalysisScreen() {
   }
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
+    <ScrollView
+      style={styles.container}
+      contentContainerStyle={styles.content}
+      keyboardShouldPersistTaps="handled"
+      automaticallyAdjustKeyboardInsets
+      keyboardDismissMode="interactive"
+    >
       <View style={styles.card}>
         <Text style={styles.sectionTitle}>Variable a analizar</Text>
         <Select
