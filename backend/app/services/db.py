@@ -88,3 +88,15 @@ def get_pest_counts(evaluation_id: str) -> list[dict[str, Any]]:
         .execute()
     )
     return res.data or []
+
+
+def list_evaluations_for_trial(trial_id: str) -> list[dict[str, Any]]:
+    res = (
+        db()
+        .table("evaluations")
+        .select("*")
+        .eq("trial_id", trial_id)
+        .order("evaluated_at")
+        .execute()
+    )
+    return res.data or []

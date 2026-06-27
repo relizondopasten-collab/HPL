@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import {
   ActivityIndicator,
+  Alert,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -9,6 +10,8 @@ import {
 } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 
+import { apiUrl } from '@/lib/api';
+import { downloadAndShare } from '@/lib/downloads';
 import {
   getTrial,
   listPlotsForTrial,
@@ -25,6 +28,7 @@ export default function TrialDetailScreen() {
   const [plots, setPlots] = useState<PlotWithTreatment[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [downloading, setDownloading] = useState<'pdf' | 'xlsx' | null>(null);
 
   useEffect(() => {
     if (!id) return;
@@ -49,6 +53,24 @@ export default function TrialDetailScreen() {
     treatments.forEach((t, i) => m.set(t.number, colors[i]));
     return m;
   }, [treatments, colors]);
+
+  async function downloadTrialReport(format: 'pdf' | 'xlsx') {
+    if (!trial || downloading) return;
+    setDownloading(format);
+    try {
+      const url = apiUrl(`/reports/trial/${trial.id}.${format}`);
+      const filename = `ensayo-${trial.code}.${format}`;
+      const mime =
+        format === 'pdf'
+          ? 'application/pdf'
+          : 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+      await downloadAndShare(url, filename, mime);
+    } catch (err) {
+      Alert.alert('Error de descarga', err instanceof Error ? err.message : String(err));
+    } finally {
+      setDownloading(null);
+    }
+  }
 
   if (loading) {
     return (
@@ -148,6 +170,42 @@ export default function TrialDetailScreen() {
           </View>
         ))}
       </View>
+
+      <View style={styles.card}>
+        <Text style={styles.sectionTitle}>Reporte consolidado del ensayo</Text>
+        <Text style={styles.helper}>
+          Combina todas las evaluaciones: curva poblacional, eficacia Abbott y
+          Henderson-Tilton (corregida vs. el primer conteo) por DDA.
+        </Text>
+        <View style={{ flexDirection: 'row', gap: 8, marginTop: 4 }}>
+          <Pressable
+            style={[
+              styles.reportBtn,
+              { flex: 1, backgroundColor: '#1565c0' },
+              downloading === 'pdf' && styles.reportBtnBusy,
+            ]}
+            disabled={!!downloading}
+            onPress={() => downloadTrialReport('pdf')}
+          >
+            <Text style={styles.reportBtnText}>
+              {downloading === 'pdf' ? 'Descargando…' : '📄 PDF'}
+            </Text>
+          </Pressable>
+          <Pressable
+            style={[
+              styles.reportBtn,
+              { flex: 1, backgroundColor: '#2e7d32' },
+              downloading === 'xlsx' && styles.reportBtnBusy,
+            ]}
+            disabled={!!downloading}
+            onPress={() => downloadTrialReport('xlsx')}
+          >
+            <Text style={styles.reportBtnText}>
+              {downloading === 'xlsx' ? 'Descargando…' : '📊 Excel'}
+            </Text>
+          </Pressable>
+        </View>
+      </View>
     </ScrollView>
   );
 }
@@ -209,6 +267,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   ctaText: { color: '#fff', fontWeight: '700' },
+
+  reportBtn: {
+    paddingVertical: 12,
+    borderRadius: 8,
+    alignItems: 'center',
+  },
+  reportBtnBusy: { opacity: 0.6 },
+  reportBtnText: { color: '#fff', fontWeight: '700' },
 
   sectionTitle: { fontSize: 15, fontWeight: '700' },
   helper: { fontSize: 12, color: '#666', marginBottom: 4 },

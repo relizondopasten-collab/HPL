@@ -48,3 +48,50 @@ def get_evaluation_xlsx(
             "Content-Disposition": f'attachment; filename="evaluacion-{evaluation_id[:8]}.xlsx"',
         },
     )
+
+
+# -------------------- Reporte consolidado de ensayo --------------------
+
+
+@router.get("/trial/{trial_id}.pdf")
+def get_trial_pdf(
+    trial_id: str,
+    variable: str = Query(reports.TOTAL_VARIABLE, description="Estadio o '__total__'"),
+):
+    try:
+        pdf = reports.render_trial_pdf(trial_id, variable)
+    except LookupError as e:
+        raise HTTPException(404, str(e))
+    except ValueError as e:
+        raise HTTPException(400, str(e))
+    except Exception as e:  # noqa: BLE001
+        raise HTTPException(500, f"Error generando PDF: {e}")
+    return Response(
+        content=pdf,
+        media_type="application/pdf",
+        headers={
+            "Content-Disposition": f'attachment; filename="ensayo-{trial_id[:8]}.pdf"',
+        },
+    )
+
+
+@router.get("/trial/{trial_id}.xlsx")
+def get_trial_xlsx(
+    trial_id: str,
+    variable: str = Query(reports.TOTAL_VARIABLE, description="Estadio o '__total__'"),
+):
+    try:
+        data = reports.render_trial_xlsx(trial_id, variable)
+    except LookupError as e:
+        raise HTTPException(404, str(e))
+    except ValueError as e:
+        raise HTTPException(400, str(e))
+    except Exception as e:  # noqa: BLE001
+        raise HTTPException(500, f"Error generando Excel: {e}")
+    return Response(
+        content=data,
+        media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        headers={
+            "Content-Disposition": f'attachment; filename="ensayo-{trial_id[:8]}.xlsx"',
+        },
+    )
